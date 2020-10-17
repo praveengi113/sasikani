@@ -1,5 +1,4 @@
 from flask import Flask, render_template, current_app
-from src.common.post import Feed
 
 app = Flask(__name__)
 
