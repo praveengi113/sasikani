@@ -1,0 +1,4 @@
+twilio==6.37.0
+pytz==2019.3
+requests==2.23.0
+beautifulsoup4==4.8.2
