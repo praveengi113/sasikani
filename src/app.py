@@ -32,15 +32,18 @@ def index():
 
 #{% for key, value in result.items() %}
 
-with open('product_list_categ.json') as data:
-    product_list_categ = json.load(data)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+print(BASE_DIR)
+#STATIC_ROOT = os.path.join(BASE_DIR, '/src/stactic/')
+#print(STATIC_ROOT)
+#os.path.join(BASE_DIR, 'documents')
 
-with open('product_list_PID.json') as data:
-    product_list_PID = json.load(data)
 
 
 @app.route('/')
 def index():
+	with open(BASE_DIR+'/src/product_list_categ.json') as data:
+	    product_list_categ = json.load(data)
 	path = 'assets/product_photos/'
 	return render_template('index.html',product_list_categ=product_list_categ)
 
@@ -49,6 +52,8 @@ def index():
 def submit_order():
 	if request.method == 'POST':
 		result = request.form
+		with open(BASE_DIR+ '/src/product_list_PID.json') as data:
+		    product_list_PID = json.load(data)
 		#print(result)
 		#selected_PID = [dict(tuple([key,items])) for key,items in result.items() if items != '']
 		#selected_PID = dict(filter(lambda elem: elem[0] != 'email' and elem[0] != 'name'and elem[0] != 'phone' and elem[0] != 'address' , result.items()))
@@ -60,7 +65,7 @@ def submit_order():
 			selected_PID_dict[key.split('_')[-1]] = int(values)
 		#print(selected_PID_dict)
 
-		order_dict = generate_order_sheet(selected_PID_dict)
+		order_dict = generate_order_sheet(selected_PID_dict,product_list_PID)
 
 		#product_list_PID
 		dat = ''
@@ -93,7 +98,7 @@ def submit_order():
 		return render_template('index.html',product_list_categ=product_list_categ)
 
 
-def generate_order_sheet(dic_1,dic_2=product_list_PID):
+def generate_order_sheet(dic_1,dic_2):
 	selected = dic_1
 	product_list = dic_2
 	#print(product_list)
