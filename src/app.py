@@ -116,6 +116,8 @@ def generate_order_sheet(dic_1,dic_2=product_list_PID):
 	return new_dict
 
 
+if __name__ == '__main__':
+	app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT',80)))
 
 
 
