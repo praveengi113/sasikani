@@ -1,6 +1,7 @@
 from flask import Flask, render_template, current_app, request
 import os
 import json
+import datetime
 from flask_mail import Mail, Message
 
 
@@ -38,14 +39,20 @@ print(BASE_DIR)
 #print(STATIC_ROOT)
 #os.path.join(BASE_DIR, 'documents')
 
+with open(BASE_DIR+'/src/product_list_categ.json') as data:
+    product_list_categ = json.load(data)
 
+with open(BASE_DIR+ '/src/product_list_PID.json') as data:
+    product_list_PID = json.load(data)
 
 @app.route('/')
 def index():
-	with open(BASE_DIR+'/src/product_list_categ.json') as data:
-	    product_list_categ = json.load(data)
+	new_dict={}
+	for key,value in product_list_PID.items():
+		new_dict[key]=value["Rate"]
+
 	path = 'assets/product_photos/'
-	return render_template('index.html',product_list_categ=product_list_categ)
+	return render_template('index.html',product_list_categ=product_list_categ, price=new_dict)
 
 
 @app.route('/submit/order/',methods = ['POST'])
@@ -58,7 +65,8 @@ def submit_order():
 		#selected_PID = [dict(tuple([key,items])) for key,items in result.items() if items != '']
 		#selected_PID = dict(filter(lambda elem: elem[0] != 'email' and elem[0] != 'name'and elem[0] != 'phone' and elem[0] != 'address' , result.items()))
 		#print(selected_PID)
-		selected_PID = dict(filter(lambda elem: elem[1] != ''and elem[0] != 'email' and elem[0] != 'name'and elem[0] != 'phone' and elem[0] != 'address' , result.items())) 
+		#print(result)
+		selected_PID = dict(filter(lambda elem: elem[1] != ''and elem[1] != '0' and elem[0] != 'email' and elem[0] != 'name'and elem[0] != 'phone' and elem[0] != 'address' and elem[0] != 'payment_option' , result.items())) 
 		#print(selected_PID)
 		selected_PID_dict = {}
 		for key,values in selected_PID.items():
@@ -72,30 +80,54 @@ def submit_order():
 		head = '<thead><th><tr><th>S.No</th><th>PID</th><th>Product Name</th><th>Rate</th><th>Qty</th><th>Amt</th></thead>'
 		total_amt = 0
 
+		check = len(order_dict.keys())
 		for key in order_dict.keys():
-			dat += '<tr><td>'+str(key)+'</td><td>'+str(order_dict[key]["PID"])+'</td><td>'+str(order_dict[key]["Product_Name"])+'</td><td>'+str(order_dict[key]["Rate"])+'</td><td>'+str(order_dict[key]["qty"])+'</td><td>'+str(order_dict[key]["qty_amt"])+'</td></tr>'
+			if key == check:
+				dat += '<tr class="last-row" ><td class="text-center">'+str(key)+'</td><td class="text-center">'+str(order_dict[key]["PID"])+'</td><td class="text-center">'+str(order_dict[key]["Product_Name"])+'</td><td class="text-right">'+str(order_dict[key]["Rate"])+'</td><td class="text-right">'+str(order_dict[key]["qty"])+'</td><td class="text-right">'+str(order_dict[key]["qty_amt"])+'</td></tr>'
+			else:
+				dat += '<tr><td class="text-center">'+str(key)+'</td><td class="text-center">'+str(order_dict[key]["PID"])+'</td><td class="text-center">'+str(order_dict[key]["Product_Name"])+'</td><td class="text-right">'+str(order_dict[key]["Rate"])+'</td><td class="text-right">'+str(order_dict[key]["qty"])+'</td><td class="text-right">'+str(order_dict[key]["qty_amt"])+'</td></tr>'
 			total_amt += order_dict[key]["qty_amt"]
 
+		invoice_table = '<tbody>'+dat+'</tbody>'
+
 		dat1 = '<tr><td></td><td></td><td></td><td></td><td>Total<br>Amount</td><td>'+str(total_amt)+'</td>'
+		links = '''<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>'''
 		body = '<tbody>'+dat+dat1+'</tbody>'
 
-		table = "<table class='table table-border'>"+head+body+"</table>"
+		table = "<table class='table table-responsive table-border'>"+head+body+"</table>"
 
-		recpient_email = 'contact@sasikanicrackers.com'
-		#recpient_email = result.get('email')
+		recpient_email = 'crackerssasikani@gmail.com'
+		recpient_email_1 = result.get('email')
 		customer_name = result.get('name')
 		customer_phone = result.get('phone')
 		customer_address = result.get('address')
+		payment_option = result.get('payment_option')
+		
 		#product_list_PID
 		msg = Message('Hello New Order', sender = 'praveen113kumar@hotmail.com', recipients = [recpient_email])
-		msg.body = "<html>Hello "+customer_name+" has ordered.<br> His Phone Number: "+customer_phone+"<br>His Address: "+customer_address+"<br>Finally: "+str(selected_PID_dict)+"<br>Bye</html>"
+		msg.body = "<html><head>"+links+"</head>Hello "+customer_name+" has ordered.<br> His Phone Number: "+customer_phone+"<br>His Address: "+customer_address+"<br>Finally: "+str(selected_PID_dict)+"<br>Bye</html>"
 		#msg.body = "Hi"
-		msg.html = "<html>Hello "+customer_name+" has ordered.<br> His Phone Number: "+customer_phone+"<br>His Address: "+customer_address+"<br>Order Details: <br>"+table+"<br>Bye</html>"
-		mail.send(msg)
+		#msg.html = "<html>Hello "+customer_name+" has ordered.<br> His Phone Number: "+customer_phone+"<br>His Address: "+customer_address+"<br>Order Details: <br>"+table+"<br>Bye</html>"
+
+		ref_no = "Order0001"
+		time_now = datetime.datetime.now()
+
+		dict_new = {'name':customer_name,'address':customer_address,"phone":customer_phone,"mail":recpient_email_1,"order_time":time_now,"ref_no":ref_no,"payment_option":payment_option}
+
+		msg.html = render_template('invoice.html',invoice_table=invoice_table,total_amt=total_amt,invoice_details=dict_new,payment_option=payment_option)
+
+		try:
+			mail.send(msg)
+		except Exception as err:
+			#pass
+			print(err)
 
 
-
-		return render_template('index.html',product_list_categ=product_list_categ)
+		return render_template('invoice.html',invoice_table=invoice_table,total_amt=total_amt,invoice_details=dict_new,payment_option=payment_option)
 
 
 def generate_order_sheet(dic_1,dic_2):
@@ -120,6 +152,21 @@ def generate_order_sheet(dic_1,dic_2):
 
 	return new_dict
 
+@app.route('/index')
+def home1():
+	new_dict={}
+	for key,value in product_list_PID.items():
+		new_dict[key]=value["Rate"]
+	path = 'assets/product_photos/'
+	return render_template('index.html',product_list_categ=product_list_categ, price=new_dict)
+
+@app.route('/product')
+def home2():
+	new_dict={}
+	for key,value in product_list_PID.items():
+		new_dict[key]=value["Rate"]
+	path = 'assets/product_photos/'
+	return render_template('index.html',product_list_categ=product_list_categ, price=new_dict)
 
 if __name__ == '__main__':
 	app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT',80)))
