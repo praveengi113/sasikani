@@ -7,8 +7,6 @@ import requests
 #import smtplib
 #from email.mime.text import MIMEText
 
-def send_mail():
-	return requests.post("https://api.mailgun.net/v3/sandbox9ac083f02e414f50a0541191e04fe126.mailgun.org", auth = ("api","c4a2d57211829e33d0d81cfbd8f8f881-53c13666-64770e48"), data = {"from": "Excited User <mailgun@sasikanicrackers.com>", "to": ["crackerssasikani@gmail.com"], "subject": "Order Placed", "html": render_template('invoice.html',invoice_table=invoice_table,total_amt=total_amt,invoice_details=dict_new,payment_option=payment_option)})
 
 
 
@@ -127,14 +125,13 @@ def submit_order():
 		dict_new = {'name':customer_name,'address':customer_address,"phone":customer_phone,"mail":recpient_email_1,"order_time":time_now,"ref_no":ref_no,"payment_option":payment_option}
 
 		msg.html = render_template('invoice.html',invoice_table=invoice_table,total_amt=total_amt,invoice_details=dict_new,payment_option=payment_option)
-
-		send_mail()
+		requests.post("https://api.mailgun.net/v3/sandbox9ac083f02e414f50a0541191e04fe126.mailgun.org", auth = ("api","c4a2d57211829e33d0d81cfbd8f8f881-53c13666-64770e48"), data = {"from": "Excited User <mailgun@sasikanicrackers.com>", "to": ["crackerssasikani@gmail.com"], "subject": "Order Placed", "html": render_template('invoice.html',invoice_table=invoice_table,total_amt=total_amt,invoice_details=dict_new,payment_option=payment_option)})
 		try:
 			mail.send(msg)
 		except Exception as err:
 			#pass
 			print(err)
-
+"""
 		msg = MIMEText('Testing some Mailgun awesomness')
 		msg['Subject'] = "Hello"
 		msg['From']    = "foo@YOUR_DOMAIN_NAME"
@@ -145,7 +142,7 @@ def submit_order():
 		s.login('postmaster@YOUR_DOMAIN_NAME', '3kh9umujora5')
 		s.sendmail(msg['From'], msg['To'], msg.as_string())
 		s.quit()
-
+"""
 		return render_template('invoice.html',invoice_table=invoice_table,total_amt=total_amt,invoice_details=dict_new,payment_option=payment_option)
 
 
