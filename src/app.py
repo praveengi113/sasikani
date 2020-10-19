@@ -10,6 +10,7 @@ app = Flask(__name__)
 
 #app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_SERVER']='smtp.live.com'
+app.config['DEBUG'] = True
 app.config['MAIL_PORT'] = 587
 #app.config['MAIL_USERNAME'] = 'newperspectiveofficials@gmail.com'
 #app.config['MAIL_PASSWORD'] = 'manpradev'
@@ -168,6 +169,17 @@ def home2():
 	path = 'assets/product_photos/'
 	return render_template('index.html',product_list_categ=product_list_categ, price=new_dict)
 
+
+@app.route('/contact')
+def home3():
+	new_dict={}
+	for key,value in product_list_PID.items():
+		new_dict[key]=value["Rate"]
+	path = 'assets/product_photos/'
+	return render_template('index.html',product_list_categ=product_list_categ, price=new_dict)
+
+
+	
 if __name__ == '__main__':
 	app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT',80)))
 
