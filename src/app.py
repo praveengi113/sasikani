@@ -2,7 +2,7 @@ from flask import Flask, render_template, current_app, request
 import os
 import json
 import datetime
-#from flask_mail import Mail, Message
+from flask_mail import Mail, Message
 #import requests
 #import smtplib
 #from email.mime.text import MIMEText
