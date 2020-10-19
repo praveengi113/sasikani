@@ -51,8 +51,8 @@ with open(BASE_DIR+'/src/product_list_categ.json') as data:
 with open(BASE_DIR+ '/src/product_list_PID.json') as data:
     product_list_PID = json.load(data)
 
-login_username = "admin"
-login_password = "123456"
+login_username = "sasikani2020crackers@skt"
+login_password = "Sasikani@2020"
 
 # custom Encoder
 class DateTimeEncoder(JSONEncoder):
