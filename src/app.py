@@ -3,6 +3,7 @@ from functools import wraps
 import os
 import json
 import datetime
+from pytz import timezone
 from json import JSONEncoder
 #from flask_mail import Mail, Message
 
@@ -122,7 +123,7 @@ def submit_order():
 		customer_address = result.get('address')
 		payment_option = result.get('payment_option')
 		
-		order_time = datetime.datetime.now()
+		order_time  = datetime.now(timezone('Asia/Kolkata'))
 
 		#with open(BASE_DIR+'/src/latest_ref_no.txt') as data:
 		    #shiprocket_token = data.read().strip()
@@ -319,7 +320,7 @@ def order_detail(order_id):
 			customer_address = order_list_dict[order_id]["customer_details"]["address"]
 			customer_phone = order_list_dict[order_id]["customer_details"]["phone"]
 			customer_email = order_list_dict[order_id]["customer_details"]["email"]
-			order_list_dict[order_id]["order_time"] = datetime.datetime.fromisoformat(order_list_dict[order_id]["order_time"])
+			#order_list_dict[order_id]["order_time"] = datetime.datetime.fromisoformat(order_list_dict[order_id]["order_time"])
 			order_time = order_list_dict[order_id]["order_time"]
 			ref_no = order_id
 			payment_option = order_list_dict[order_id]["payment_option"]
