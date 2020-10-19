@@ -3,7 +3,7 @@ import os
 import json
 import datetime
 from flask_mail import Mail, Message
-import requests
+#import requests
 import smtplib
 from email.mime.text import MIMEText
 
@@ -134,7 +134,7 @@ def submit_order():
 		s.login('postmaster@sandbox9ac083f02e414f50a0541191e04fe126.mailgun.org')
 		s.sendmail(msg['From'],msg['To'],msg.as_string())
 		s.quit()
-		
+
 		try:
 			mail.send(msg)
 		except Exception as err:
