@@ -293,43 +293,47 @@ def order_detail(order_id):
 		print('err')
 	taotal_order_ids = list(order_list_dict.keys())
 
-	if order_id in taotal_order_ids:
+	try:
+		if order_id in taotal_order_ids:
 
-		selected_PID_dict = order_list_dict[order_id]['product_details'] 
+			selected_PID_dict = order_list_dict[order_id]['product_details'] 
 
-		order_dict = generate_order_sheet(selected_PID_dict,product_list_PID)
-		#print(order_dict)
-		#product_list_PID
-		dat = ''
-		#head = '<thead><th><tr><th>S.No</th><th>PID</th><th>Product Name</th><th>Rate</th><th>Qty</th><th>Amt</th></thead>'
-		total_amt = 0
+			order_dict = generate_order_sheet(selected_PID_dict,product_list_PID)
+			#print(order_dict)
+			#product_list_PID
+			dat = ''
+			#head = '<thead><th><tr><th>S.No</th><th>PID</th><th>Product Name</th><th>Rate</th><th>Qty</th><th>Amt</th></thead>'
+			total_amt = 0
 
-		check = len(order_dict.keys())
-		for key in order_dict.keys():
-			if key == check:
-				dat += '<tr class="last-row" ><td class="text-center">'+str(key)+'</td><td class="text-center">'+str(order_dict[key]["PID"])+'</td><td class="text-center">'+str(order_dict[key]["Product_Name"])+'</td><td class="text-right">'+str(order_dict[key]["Rate"])+'</td><td class="text-right">'+str(order_dict[key]["qty"])+'</td><td class="text-right">'+str(order_dict[key]["qty_amt"])+'</td></tr>'
-			else:
-				dat += '<tr><td class="text-center">'+str(key)+'</td><td class="text-center">'+str(order_dict[key]["PID"])+'</td><td class="text-center">'+str(order_dict[key]["Product_Name"])+'</td><td class="text-right">'+str(order_dict[key]["Rate"])+'</td><td class="text-right">'+str(order_dict[key]["qty"])+'</td><td class="text-right">'+str(order_dict[key]["qty_amt"])+'</td></tr>'
-			total_amt += order_dict[key]["qty_amt"]
+			check = len(order_dict.keys())
+			for key in order_dict.keys():
+				if key == check:
+					dat += '<tr class="last-row" ><td class="text-center">'+str(key)+'</td><td class="text-center">'+str(order_dict[key]["PID"])+'</td><td class="text-center">'+str(order_dict[key]["Product_Name"])+'</td><td class="text-right">'+str(order_dict[key]["Rate"])+'</td><td class="text-right">'+str(order_dict[key]["qty"])+'</td><td class="text-right">'+str(order_dict[key]["qty_amt"])+'</td></tr>'
+				else:
+					dat += '<tr><td class="text-center">'+str(key)+'</td><td class="text-center">'+str(order_dict[key]["PID"])+'</td><td class="text-center">'+str(order_dict[key]["Product_Name"])+'</td><td class="text-right">'+str(order_dict[key]["Rate"])+'</td><td class="text-right">'+str(order_dict[key]["qty"])+'</td><td class="text-right">'+str(order_dict[key]["qty_amt"])+'</td></tr>'
+				total_amt += order_dict[key]["qty_amt"]
 
-		invoice_table = '<tbody>'+dat+'</tbody>'
+			invoice_table = '<tbody>'+dat+'</tbody>'
 
-		customer_name = order_list_dict[order_id]["customer_details"]["name"]
-		customer_address = order_list_dict[order_id]["customer_details"]["address"]
-		customer_phone = order_list_dict[order_id]["customer_details"]["phone"]
-		customer_email = order_list_dict[order_id]["customer_details"]["email"]
-		order_list_dict[order_id]["order_time"] = datetime.datetime.fromisoformat(order_list_dict[order_id]["order_time"])
-		order_time = order_list_dict[order_id]["order_time"]
-		ref_no = order_id
-		payment_option = order_list_dict[order_id]["payment_option"]
-		total_amt = order_list_dict[order_id]["order_amt"]
+			customer_name = order_list_dict[order_id]["customer_details"]["name"]
+			customer_address = order_list_dict[order_id]["customer_details"]["address"]
+			customer_phone = order_list_dict[order_id]["customer_details"]["phone"]
+			customer_email = order_list_dict[order_id]["customer_details"]["email"]
+			order_list_dict[order_id]["order_time"] = datetime.datetime.fromisoformat(order_list_dict[order_id]["order_time"])
+			order_time = order_list_dict[order_id]["order_time"]
+			ref_no = order_id
+			payment_option = order_list_dict[order_id]["payment_option"]
+			total_amt = order_list_dict[order_id]["order_amt"]
 
 
-		dict_new = {'name':customer_name,'address':customer_address,"phone":customer_phone,"mail":customer_email,"order_time":order_time,"ref_no":ref_no,"payment_option":payment_option}
+			dict_new = {'name':customer_name,'address':customer_address,"phone":customer_phone,"mail":customer_email,"order_time":order_time,"ref_no":ref_no,"payment_option":payment_option}
 
-		return render_template('invoice.html',invoice_table=invoice_table,total_amt=total_amt,invoice_details=dict_new,payment_option=payment_option)
+			return render_template('invoice.html',invoice_table=invoice_table,total_amt=total_amt,invoice_details=dict_new,payment_option=payment_option)
 
-	else:
+		else:
+			return render_template('error.html')
+	except Exception as err:
+		print(err)
 		return render_template('error.html')
 
 @app.route('/close-order/<order_id>')
