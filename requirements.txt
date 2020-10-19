@@ -1,4 +1,5 @@
 Flask==0.10.1
 gunicorn
 Flask-Mail
-requests
+secure-smtplib
+email-to

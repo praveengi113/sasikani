@@ -4,8 +4,8 @@ import json
 import datetime
 from flask_mail import Mail, Message
 import requests
-#import smtplib
-#from email.mime.text import MIMEText
+import smtplib
+from email.mime.text import MIMEText
 
 
 
@@ -125,7 +125,16 @@ def submit_order():
 		dict_new = {'name':customer_name,'address':customer_address,"phone":customer_phone,"mail":recpient_email_1,"order_time":time_now,"ref_no":ref_no,"payment_option":payment_option}
 
 		msg.html = render_template('invoice.html',invoice_table=invoice_table,total_amt=total_amt,invoice_details=dict_new,payment_option=payment_option)
-		requests.post("https://api.mailgun.net/v3/sandbox9ac083f02e414f50a0541191e04fe126.mailgun.org", auth = ("api","c4a2d57211829e33d0d81cfbd8f8f881-53c13666-64770e48"), data = {"from": "<app187924775@heroku.com>", "to": ["crackerssasikani@gmail.com"], "subject": "Order Placed", "html": "<html>Hello There</html>"})
+		#requests.post("https://api.mailgun.net/v3/sandbox9ac083f02e414f50a0541191e04fe126.mailgun.org", auth = ("api","c4a2d57211829e33d0d81cfbd8f8f881-53c13666-64770e48"), data = {"from": "<app187924775@heroku.com>", "to": ["crackerssasikani@gmail.com"], "subject": "Order Placed", "html": "<html>Hello There</html>"})
+		msg = MIMEText('Testing some Mailgun awesomness')
+		msg['Subject'] = "Hello"
+		msg['From'] = "app187924775@heroku.com"
+		msg['To'] = "crackerssasikani@gmail.com"
+		s = smtplib.SMTP('smtp.mailgun.org', 587)
+		s.login('postmaster@sandbox9ac083f02e414f50a0541191e04fe126.mailgun.org')
+		s.sendmail(msg['From'],msg['To'],msg.as_string())
+		s.quit()
+		
 		try:
 			mail.send(msg)
 		except Exception as err:
