@@ -90,7 +90,7 @@ def submit_order():
 
 		order_dict = generate_order_sheet(selected_PID_dict,product_list_PID)
 
-		print(order_dict)
+		#print(order_dict)
 
 		#product_list_PID
 		dat = ''
@@ -113,7 +113,6 @@ def submit_order():
 		except IOError as err:
 			print('err')
 
-		print(order_list_dict)
 
 		#datetime.datetime.fromisoformat(empDict["joindate"])
 
@@ -126,7 +125,7 @@ def submit_order():
 		payment_option = result.get('payment_option')
 		
 		order_time  = datetime.now(timezone('Asia/Kolkata'))
-
+		print(order_time)
 		#with open(BASE_DIR+'/src/latest_ref_no.txt') as data:
 		    #shiprocket_token = data.read().strip()
 
