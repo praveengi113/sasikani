@@ -96,7 +96,6 @@ $("body").on('input','.qty',function() {
 
     }
 	if(qty == " "){
-		alert('f');
 	    	$(this).val("0");//focus
 	    	$(this).parent().next().find('.total_price').html('₹ 0');
 	    	$(this).parent().next().find('.total_price_cmt').html('(Add Quantity for checkout)');
