@@ -113,6 +113,8 @@ def submit_order():
 		except IOError as err:
 			print('err')
 
+		print(order_list_dict)
+
 		#datetime.datetime.fromisoformat(empDict["joindate"])
 
 
