@@ -124,7 +124,6 @@ def submit_order():
 		payment_option = result.get('payment_option')
 		
 		order_time  = datetime.now(timezone('Asia/Kolkata'))
-		order_time = order_time.strftime("%d/%m/%Y %H:%M:%S")
 
 		#with open(BASE_DIR+'/src/latest_ref_no.txt') as data:
 		    #shiprocket_token = data.read().strip()
@@ -144,9 +143,14 @@ def submit_order():
 		order_details['customer_details'] = {"name":customer_name,"phone":customer_phone,"email":customer_email,"address":customer_address}
 		order_details['product_details'] = selected_PID_dict
 
+		try:
+			with open(BASE_DIR+ '/src/order_list.json', "w") as jsonFile:
+				json.dump(order_list_dict, jsonFile, cls=DateTimeEncoder)
 
-		with open(BASE_DIR+ '/src/order_list.json', "w") as jsonFile:
-		    json.dump(order_list_dict, jsonFile, cls=DateTimeEncoder)
+		except Exception as err:
+			#pass
+			print(err)
+
 
 
 		#product_list_PID
