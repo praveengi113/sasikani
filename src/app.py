@@ -124,6 +124,7 @@ def submit_order():
 		payment_option = result.get('payment_option')
 		
 		order_time  = datetime.now(timezone('Asia/Kolkata'))
+		order_time = order_time.strftime("%d/%m/%Y %H:%M:%S")
 
 		#with open(BASE_DIR+'/src/latest_ref_no.txt') as data:
 		    #shiprocket_token = data.read().strip()
