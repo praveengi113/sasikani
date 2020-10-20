@@ -123,7 +123,7 @@ def submit_order():
 		customer_phone = result.get('phone')
 		customer_address = result.get('address')
 		payment_option = result.get('payment_option')
-		
+		print("Process ends here")
 		order_time  = datetime.now(timezone('Asia/Kolkata'))
 		print(order_time)
 		#with open(BASE_DIR+'/src/latest_ref_no.txt') as data:
