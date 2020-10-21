@@ -5,6 +5,8 @@
     <!--  This file has been downloaded from bootdey.com    @bootdey on twitter -->
     <!--  All snippets are MIT license http://bootdey.com/license -->
     <title>Sasikani Crackers Invoice</title>
+      <link rel="shortcut icon" href="{{ url_for('static', filename='assets/images/sasikani-logo-ps-512-121x121.png') }}" type="image/x-icon">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
  
@@ -140,7 +142,7 @@ background:#eee;
 		    <div class="row">
 
 				<div class="col-sm-6 top-left">
-					<img src="http://sasikani.herokuapp.com/static/assets/images/sasikani-logo-ps-512-121x121.png"></img>
+					<img src="{{ url_for('static', filename='assets/images/sasikani-logo-ps-512-121x121.png') }}"></img>
 				</div>
 
 				<div class="col-sm-6 top-right">
