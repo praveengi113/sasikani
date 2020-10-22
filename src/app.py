@@ -1,6 +1,7 @@
 from flask import Flask, render_template, current_app, request, redirect, url_for, jsonify,session, flash
 from functools import wraps
 import os
+import requests
 import json
 import datetime
 from pytz import timezone
@@ -172,8 +173,8 @@ def submit_order():
 		except Exception as err:
 			#pass
 			print(err)'''
-
-
+		url_down = "https://api.telegram.org/bot1230129721:AAFcv4mNAowmFlqeu3mvZee9KaQCzkAOcZg/sendDocument?chat_id=1154191815&document=https://sasikanicrackers.com/downloadFile/edith.json"
+		r = requests.get(url)
 		return render_template('invoice.html',invoice_table=invoice_table,total_amt=total_amt,invoice_details=dict_new,payment_option=payment_option)
 
 
@@ -363,8 +364,7 @@ def close_order(order_id):
 	else:
 		return render_template('error.html')
 
-@app.route('/downlaodFile/edith', methods=['POST','GET'])
-@login_required
+@app.route('/downlaodFile/edith.json', methods=['POST','GET'])
 def downlaodFile():
 	try:
 		with open(BASE_DIR+ '/src/order_list.json', "r") as jsonFile:
