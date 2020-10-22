@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <!--  This file has been downloaded from bootdey.com    @bootdey on twitter -->
     <!--  All snippets are MIT license http://bootdey.com/license -->
-    <title>Sasikani Crackers Admin</title>
+    <title>Sasikani Crackers Products</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Latest compiled and minified CSS -->
 	  <link rel="shortcut icon" href="{{ url_for('static', filename='assets/images/cclogo.png') }}" type="image/x-icon">
@@ -147,10 +147,10 @@ background:#eee;
 	  	<div class="panel panel-default">
 		  <div class="panel-body">
 			<hr>
-			<div class="row"><div class="text-right"><a class="btn btn-danger display-4" href="{{ url_for('logout') }}"><span class=" mbr-iconfont mbr-iconfont-btn"></span>Logout</a></div>
-   			<div class="text-right"><a class="btn btn-info display-4" href="{{ url_for('product_update') }}"><span class=" mbr-iconfont mbr-iconfont-btn"></span>Show/Hide</a></div></div>
+			<div class="text-right">
+   <a class="btn btn-danger display-4" href="{{ url_for('logout') }}"><span class=" mbr-iconfont mbr-iconfont-btn"></span>Logout</a></div>
 			<div class="row">
-				<h3>Order Details</h3>
+				<h3>Product Details</h3>
 
 			</div>
 
@@ -159,15 +159,13 @@ background:#eee;
 			      <thead>
 			        <tr>
 			        <th class="text-center" >S.No</th>
-			          <th class="text-center" >Order ID</th>
+			          <th class="text-center" >Product ID</th>
 			          <th class="text-center" >Name</th>
-			          <th class="text-center" >Phone</th>
-			          <th class="text-center" >Order Amount</th>
-			          <th class="text-center" >Order Status</th>
+			          <th class="text-center" >Status</th>
 			          <th class="text-center" >Action</th>
 			        </tr>
 			      </thead>
-			      {{orders_table | safe}}
+			      {{product_table | safe}}
 			    </table>
 
 			</div>
@@ -219,12 +217,7 @@ $(document).ready( function () {
     		selector:'td:nth-child(2)'
     	},
     	responsive: true,
-    	"lengthChange": true,
-        dom: 'lBfrtip',
-        buttons: [
-            'excelHtml5',
-            'pdfHtml5'
-        ]
+       "lengthChange": true,
     });
 } );
 </script>

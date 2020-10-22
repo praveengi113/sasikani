@@ -105,6 +105,9 @@ def submit_order():
 				dat += '<tr><td class="text-center">'+str(key)+'</td><td class="text-center">'+str(order_dict[key]["PID"])+'</td><td class="text-center">'+str(order_dict[key]["Product_Name"])+'</td><td class="text-right">'+str(order_dict[key]["Rate"])+'</td><td class="text-right">'+str(order_dict[key]["qty"])+'</td><td class="text-right">'+str(order_dict[key]["qty_amt"])+'</td></tr>'
 			total_amt += order_dict[key]["qty_amt"]
 
+		if total_amt < 3000:
+			return '<h1 style="color:red;">Please order above Rs.3000</h1> <button><a href="https://sasikanicrackers.com">Home</a></button>'
+
 		invoice_table = '<tbody>'+dat+'</tbody>'
 
 		try:
@@ -172,6 +175,8 @@ def submit_order():
 		except Exception as err:
 			#pass
 			print(err)'''
+
+
 		return render_template('invoice.html',invoice_table=invoice_table,total_amt=total_amt,invoice_details=dict_new,payment_option=payment_option)
 
 
@@ -361,7 +366,110 @@ def close_order(order_id):
 	else:
 		return render_template('error.html')
 
-@app.route('/downlaodFile/edith.json', methods=['POST','GET'])
+
+
+@app.route('/product_update')
+@login_required
+def product_update():
+	try:
+		with open(BASE_DIR+ '/src/product_list_PID.json', "r") as jsonFile:
+			product_list_dict = json.load(jsonFile) #, object_hook=DecodeDateTime
+	except IOError as err:
+		print('err')
+
+	#print(order_list_dict)
+	#check = len(order_list_dict.keys())
+	#print(order_list_dict.keys())
+	#print(len(list(order_list_dict.keys())))
+	if len(list(product_list_dict.keys())) != 0:
+		last_product = list(product_list_dict.keys())
+		last_product.sort()
+		last_product = last_product[-1]
+		dat = ''
+		counter = 1
+		for key in product_list_dict.keys():
+			if product_list_dict[key]['show']:
+				status = "Active"
+				action = '<a class="btn btn-danger" role="button" href="close-product/'+str(key)+'">Hide Product</a>'
+			else:
+				status = "Inactive"
+				action = '<a class="btn btn-success" role="button" href="open-product/'+str(key)+'">Show Product</a>'
+			#status = str(order_list_dict[key]['order_processed'])
+			if key == last_product:
+				dat += '<tr class="last-row" ><td class="text-center">'+str(counter)+'</td><td class="text-center">'+str(product_list_dict[key]['PID'])+'</td><td class="text-center">'+str(product_list_dict[key]['Product_Name'])+'</td><td class="text-center">'+status+'</td><td class="text-center">'+action+'</td></tr>'
+			else:
+				dat += '<tr><td class="text-center">'+str(counter)+'</td><td class="text-center">'+str(product_list_dict[key]['PID'])+'</td><td class="text-center">'+str(product_list_dict[key]['Product_Name'])+'</td><td class="text-center">'+status+'</td><td class="text-center">'+action+'</td></tr>'
+			counter += 1
+			#total_amt += order_list_dict[key]["qty_amt"]
+
+		product_table = '<tbody>'+dat+'</tbody>'
+	else:
+		product_table = '<tbody>No Data</tbody>'
+
+	return render_template('product_update.html',product_table=product_table)
+
+
+@app.route('/close-product/<PID>')
+@login_required
+def close_product(PID):
+	#product_list_categ
+
+	pids = list(product_list_PID.keys())
+	if PID in pids:
+		product_list_PID[PID]['show'] = False
+		for key,values in product_list_categ.items():
+			for e in values:
+				if str(e['PID']) == PID:
+					e['show'] = False
+
+		'''Categ_dict = {}
+		temp_dic_list = []
+		for key,values in PID_dict.items():
+			temp_dic_list.append(PID_dict[key])
+		#print(temp_dic_list)
+		for each in temp_dic_list:
+		    Key = each['Category']
+		    if Key in PID_dict.keys():
+		        Categ_dict[Key].append(each)
+		    else:
+		        Categ_dict[Key]=[each]'''
+
+		#print(PID_dict)
+		#print(Categ_dict.keys())
+		with open('product_list_PID.json', "w") as jsonFile:
+		    json.dump(product_list_PID, jsonFile)
+		with open('product_list_categ.json', "w") as jsonFile:
+		    json.dump(product_list_categ, jsonFile)
+
+		return redirect(url_for('product_update'))
+
+	else:
+		return render_template('error.html')
+
+@app.route('/open-product/<PID>')
+@login_required
+def open_product(PID):
+	#product_list_categ
+
+	pids = list(product_list_PID.keys())
+	if PID in pids:
+		product_list_PID[PID]['show'] = True
+		for key,values in product_list_categ.items():
+			for e in values:
+				if str(e['PID']) == PID:
+					e['show'] = True
+		with open('product_list_PID.json', "w") as jsonFile:
+		    json.dump(product_list_PID, jsonFile)
+		with open('product_list_categ.json', "w") as jsonFile:
+		    json.dump(product_list_categ, jsonFile)
+
+		return redirect(url_for('product_update'))
+
+	else:
+		return render_template('error.html')
+
+@app.route('/downlaodFile/edith', methods=['POST','GET'])
+@login_required
 def downlaodFile():
 	try:
 		with open(BASE_DIR+ '/src/order_list.json', "r") as jsonFile:
@@ -399,7 +507,7 @@ def home2():
 	return render_template('index.html',product_list_categ=product_list_categ, price=new_dict)
 
 if __name__ == '__main__':
-	app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT',80)))
+	app.run(debug=True, port=int(os.environ.get('PORT',80)))
 
 
 
