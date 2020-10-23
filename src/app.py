@@ -469,7 +469,6 @@ def open_product(PID):
 		return render_template('error.html')
 
 @app.route('/downlaodFile/edith', methods=['POST','GET'])
-@login_required
 def downlaodFile():
 	try:
 		with open(BASE_DIR+ '/src/order_list.json', "r") as jsonFile:
