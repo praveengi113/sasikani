@@ -7,7 +7,7 @@
     <title>Sasikani Crackers Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Latest compiled and minified CSS -->
-	  <link rel="shortcut icon" href="{{ url_for('static', filename='assets/images/cclogo.png') }}" type="image/x-icon">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='assets/images/sasikani-logo-ps-512-121x121.png') }}" type="image/x-icon">
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
@@ -147,8 +147,13 @@ background:#eee;
 	  	<div class="panel panel-default">
 		  <div class="panel-body">
 			<hr>
-			<div class="row"><div class="text-right"><a class="btn btn-danger display-4" href="{{ url_for('logout') }}"><span class=" mbr-iconfont mbr-iconfont-btn"></span>Logout</a></div>
-   			<div class="text-right"><a class="btn btn-info display-4" href="{{ url_for('product_update') }}"><span class=" mbr-iconfont mbr-iconfont-btn"></span>Show/Hide</a></div></div>
+			<div class="row"><div class="text-right">
+				 <a class="btn btn-info display-4" href="{{ url_for('product_update') }}"><span class=" mbr-iconfont mbr-iconfont-btn"></span>Show/Hide</a>
+
+				 <a class="btn btn-warning display-4" href="{{ url_for('product_change') }}"><span class=" mbr-iconfont mbr-iconfont-btn"></span>Update</a>
+				 
+				 <a class="btn btn-danger display-4" href="{{ url_for('logout') }}"><span class=" mbr-iconfont mbr-iconfont-btn"></span>Logout</a>
+			</div></div>
 			<div class="row">
 				<h3>Order Details</h3>
 
@@ -180,8 +185,6 @@ background:#eee;
 
 			</div>
 			</div>
-			<a href="{{ url_for('downlaodFile') }}" style="display:None" download>jarvis</a>
-
 		  </div>
 		</div>
 	</div>

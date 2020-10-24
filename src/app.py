@@ -5,6 +5,7 @@ import json
 import datetime
 from pytz import timezone
 from json import JSONEncoder
+import pymongo
 #from flask_mail import Mail, Message
 
 
@@ -13,6 +14,9 @@ SECRET_KEY = 'sho123prav456mana911234'
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 #mail=Mail(app)
+URI = "mongodb+srv://praveen123:praveen321@skt.u5rw5.mongodb.net/skt_sc?retryWrites=true&w=majority"
+client = pymongo.MongoClient(URI)
+db = client['skt_sc']
 
 #app.config['MAIL_SERVER']='smtp.gmail.com'
 '''app.config['MAIL_SERVER']='smtp.live.com'
@@ -38,20 +42,23 @@ def index():
 """
 
 #{% for key, value in result.items() %}
+   
+# database  
+#print(product_list_PID)
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-print(BASE_DIR)
+#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#print(BASE_DIR)
 #STATIC_ROOT = os.path.join(BASE_DIR, '/src/stactic/')
 #print(STATIC_ROOT)
 #os.path.join(BASE_DIR, 'documents')
-
+'''
 with open(BASE_DIR+'/src/product_list_categ.json') as data:
     product_list_categ = json.load(data)
 
 with open(BASE_DIR+ '/src/product_list_PID.json') as data:
     product_list_PID = json.load(data)
-
-login_username = "sasikani2020crackers@skt"
+'''
+login_username = "sasikani@2020crackers@skt"
 login_password = "Sasikani@2020"
 
 # custom Encoder
@@ -64,16 +71,50 @@ class DateTimeEncoder(JSONEncoder):
 
 @app.route('/')
 def index():
-	new_dict={}
-	for key,value in product_list_PID.items():
-		new_dict[key]=value["Rate"]
+	try:
 
-	path = 'assets/product_photos/'
-	return render_template('index.html',product_list_categ=product_list_categ, price=new_dict)
+		Collection_pro = db["product"] 
+
+		json_c = {}
+		for x in Collection_pro.find():
+			#print(x)
+			product_list_PID = x.copy()
+			#print(type(product_list_PID))
+			#print('\n')
+			#print(product_list_PID)
+			#print('\n')
+			product_list_PID.update(json_c)
+			#print('***********')
+
+		product_list_PID = dict(filter(lambda elem: elem[0] != '_id' , product_list_PID.items())) 
+
+
+		new_dict={}
+		for key,value in product_list_PID.items():
+			new_dict[key]=value["Rate"]
+
+		Categ_dict = {}
+		te = []
+		for key,values in product_list_PID.items():
+			te.append(values)
+
+		for each in te:
+			Key = each['Category']
+			if Key in Categ_dict.keys():
+				Categ_dict[Key].append(each)
+			else:
+				Categ_dict[Key]=[each]
+
+		path = 'assets/product_photos/'
+		return render_template('index.html',product_list_categ=Categ_dict, price=new_dict)
+	except Exception as err:
+		print(str(err))
+		return 'Error ahhm'
 
 
 @app.route('/submit/order/',methods = ['POST'])
 def submit_order():
+
 	if request.method == 'POST':
 		result = request.form
 		#print(result)
@@ -87,6 +128,24 @@ def submit_order():
 		for key,values in selected_PID.items():
 			selected_PID_dict[key.split('_')[-1]] = int(values)
 		#print(selected_PID_dict)
+
+
+		Collection_pro = db["product"] 
+
+		json_c = {}
+		for x in Collection_pro.find():
+			#print(x)
+			product_list_PID = x.copy()
+			#print(type(product_list_PID))
+			#print('\n')
+			#print(product_list_PID)
+			#print('\n')
+			product_list_PID.update(json_c)
+			#print('***********')
+
+		product_list_PID = dict(filter(lambda elem: elem[0] != '_id' , product_list_PID.items())) 
+
+
 
 		order_dict = generate_order_sheet(selected_PID_dict,product_list_PID)
 
@@ -105,16 +164,35 @@ def submit_order():
 				dat += '<tr><td class="text-center">'+str(key)+'</td><td class="text-center">'+str(order_dict[key]["PID"])+'</td><td class="text-center">'+str(order_dict[key]["Product_Name"])+'</td><td class="text-right">'+str(order_dict[key]["Rate"])+'</td><td class="text-right">'+str(order_dict[key]["qty"])+'</td><td class="text-right">'+str(order_dict[key]["qty_amt"])+'</td></tr>'
 			total_amt += order_dict[key]["qty_amt"]
 
+
 		if total_amt < 3000:
-			return '<h1 style="color:red;">Please order above Rs.3000</h1> <button><a href="https://sasikanicrackers.com">Home</a></button>'
+			return '<h1 style="color:red;">Please order above Rs.3000</h1> <button><a href="https://covaicrackers.com">Home</a></button>'
 
 		invoice_table = '<tbody>'+dat+'</tbody>'
 
-		try:
+
+		Col_order = db["orders"]
+		json_d = {}
+		order_list_dict = {}
+		for y in Col_order.find():
+			#print(x)
+			order_list_dict = y.copy()
+			#print(type(product_list_PID))
+			#print('\n')
+			#print(product_list_PID)
+			#print('\n')
+			order_list_dict.update(json_d)
+			#print('***********')
+
+		order_list_dict = dict(filter(lambda elem: elem[0] != '_id' , order_list_dict.items())) 
+		#print("\n From Database")
+		#print(order_list_dict)
+
+		'''try:
 			with open(BASE_DIR+ '/src/order_list.json', "r") as jsonFile:
-				order_list_dict = json.load(jsonFile) #, object_hook=DecodeDateTime
+				order_list_dict1 = json.load(jsonFile) #, object_hook=DecodeDateTime
 		except IOError as err:
-			print('err')
+			print('err')'''
 
 
 		#datetime.datetime.fromisoformat(empDict["joindate"])
@@ -126,10 +204,10 @@ def submit_order():
 		customer_phone = result.get('phone')
 		customer_address = result.get('address')
 		payment_option = result.get('payment_option')
-		print("Process ends here")
+		#print("Process ends here")
 		order_time  = datetime.datetime.now()
 		#order_time =  datetime.now(timezone('Asia/Kolkata'))
-		print(order_time)
+		#print(order_time)
 		#with open(BASE_DIR+'/src/latest_ref_no.txt') as data:
 		    #shiprocket_token = data.read().strip()
 
@@ -137,8 +215,9 @@ def submit_order():
 		#print('selected_PID_dict')
 		#print(selected_PID_dict)
 		ref_no = generate_order_no(order_list_dict)
-		order_list_dict[ref_no] = {}
-		order_details = order_list_dict[ref_no]
+		order_list_dict1={}
+		order_list_dict1[ref_no] = {}
+		order_details = order_list_dict1[ref_no]
 
 		order_details['order_no'] = ref_no
 		order_details['order_processed'] = False
@@ -148,6 +227,9 @@ def submit_order():
 		order_details['customer_details'] = {"name":customer_name,"phone":customer_phone,"email":customer_email,"address":customer_address}
 		order_details['product_details'] = selected_PID_dict
 
+
+		Col_order.insert_one(order_list_dict1)
+		'''
 		try:
 			with open(BASE_DIR+ '/src/order_list.json', "w") as jsonFile:
 				json.dump(order_list_dict, jsonFile, cls=DateTimeEncoder)
@@ -156,7 +238,7 @@ def submit_order():
 			#pass
 			print(err)
 
-
+		'''
 
 		#product_list_PID
 		#msg = Message('Hello New Order', sender = 'praveen113kumar@hotmail.com', recipients = [recpient_email])
@@ -183,6 +265,7 @@ def submit_order():
 
 def generate_order_no(order_list_dict):
 	keys = list(order_list_dict.keys())
+	print(keys)
 	if len(keys) > 0:
 		keys.sort()
 		o_n = keys[-1].split('-')
@@ -256,11 +339,31 @@ def logout():
 @app.route('/admin')
 @login_required
 def admin():
+
+	Col_order = db["orders"]
+	json_d = {}
+	order_list_dict = {}
+	for y in Col_order.find():
+		#print(x)
+		order_list_dict2 = y.copy()
+		#print(type(product_list_PID))
+		#print('\n')
+		#print(product_list_PID)
+		#print('\n')
+		order_list_dict.update(order_list_dict2)
+		#print('***********')
+
+	order_list_dict = dict(filter(lambda elem: elem[0] != '_id' , order_list_dict.items())) 
+	#print("\n From Database")
+	#print(order_list_dict)
+
+	'''
+
 	try:
 		with open(BASE_DIR+ '/src/order_list.json', "r") as jsonFile:
 			order_list_dict = json.load(jsonFile) #, object_hook=DecodeDateTime
 	except IOError as err:
-		print('err')
+		print('err')'''
 
 	#print(order_list_dict)
 	#check = len(order_list_dict.keys())
@@ -297,12 +400,49 @@ def admin():
 @app.route('/order-detail/<order_id>')
 @login_required
 def order_detail(order_id):
-	try:
+
+
+
+	Collection_pro = db["product"] 
+
+	json_c = {}
+	for x in Collection_pro.find():
+		#print(x)
+		product_list_PID = x.copy()
+		#print(type(product_list_PID))
+		#print('\n')
+		#print(product_list_PID)
+		#print('\n')
+		product_list_PID.update(json_c)
+		#print('***********')
+
+	product_list_PID = dict(filter(lambda elem: elem[0] != '_id' , product_list_PID.items())) 
+
+
+	Col_order = db["orders"]
+	json_d = {}
+	order_list_dict = {}
+	for y in Col_order.find():
+		#print(x)
+		order_list_dict2 = y.copy()
+		#print(type(product_list_PID))
+		#print('\n')
+		#print(product_list_PID)
+		#print('\n')
+		order_list_dict.update(order_list_dict2)
+		#print('***********')
+
+	order_list_dict = dict(filter(lambda elem: elem[0] != '_id' , order_list_dict.items())) 
+
+	'''try:
 		with open(BASE_DIR+ '/src/order_list.json', "r") as jsonFile:
 			order_list_dict = json.load(jsonFile) #, object_hook=DecodeDateTime
 	except IOError as err:
 		print('err')
+	'''
 	taotal_order_ids = list(order_list_dict.keys())
+	
+
 
 	try:
 		if order_id in taotal_order_ids:
@@ -345,38 +485,78 @@ def order_detail(order_id):
 			return render_template('error.html')
 	except Exception as err:
 		print(err)
-		return render_template('error.html')
+		return "Error"
 
 @app.route('/close-order/<order_id>')
 @login_required
 def close_order(order_id):
+	Col_order = db["orders"]
+	order_list_dict = {}
+	for y in Col_order.find():
+		#print(x)
+		order_list_dict2 = y.copy()
+		#print(type(product_list_PID))
+		#print('\n')
+		#print(product_list_PID)
+		#print('\n')
+		order_list_dict.update(order_list_dict2)
+		#print('***********')
+
+	order_list_dict = dict(filter(lambda elem: elem[0] != '_id' , order_list_dict.items())) 
+	print(order_list_dict.keys())
+
+	'''
 	try:
 		with open(BASE_DIR+ '/src/order_list.json', "r") as jsonFile:
 			order_list_dict = json.load(jsonFile) #, object_hook=DecodeDateTime
 	except IOError as err:
 		print('err')
-
+	'''
+	'''
 	taotal_order_ids = list(order_list_dict.keys())
 	if order_id in taotal_order_ids:
 		order_list_dict[order_id]['order_processed'] = True
+	'''
+	
+	query =Col_order.find_one({order_id+".order_processed":False})
+	print(query)
+	replace_data = {"$set" :{order_id+".order_processed":True}}
+	result = Col_order.update_one( query, replace_data )
+	print(result)
+
+	'''
 		with open(BASE_DIR+ '/src/order_list.json', "w") as jsonFile:
 		    json.dump(order_list_dict, jsonFile, cls=DateTimeEncoder)
-		return redirect(url_for('admin'))
 
-	else:
-		return render_template('error.html')
+	'''
+	return redirect(url_for('admin'))
 
 
 
 @app.route('/product_update')
 @login_required
 def product_update():
+	Collection_pro = db["product"] 
+	json_c = {}
+	for x in Collection_pro.find():
+		#print(x)
+		product_list_dict = x.copy()
+		#print(type(product_list_PID))
+		#print('\n')
+		#print(product_list_PID)
+		#print('\n')
+		product_list_dict.update(json_c)
+		#print('***********')
+
+	product_list_dict = dict(filter(lambda elem: elem[0] != '_id' , product_list_dict.items())) 
+	#print(product_list_PID)
+	'''
 	try:
 		with open(BASE_DIR+ '/src/product_list_PID.json', "r") as jsonFile:
 			product_list_dict = json.load(jsonFile) #, object_hook=DecodeDateTime
 	except IOError as err:
 		print('err')
-
+	'''
 	#print(order_list_dict)
 	#check = len(order_list_dict.keys())
 	#print(order_list_dict.keys())
@@ -413,6 +593,48 @@ def product_update():
 @login_required
 def close_product(PID):
 	#product_list_categ
+	Col_pro = db["product"]
+	'''
+	order_list_dict = {}
+	for y in Col_order.find():
+		#print(x)
+		order_list_dict2 = y.copy()
+		#print(type(product_list_PID))
+		#print('\n')
+		#print(product_list_PID)
+		#print('\n')
+		order_list_dict.update(order_list_dict2)
+		#print('***********')
+
+	order_list_dict = dict(filter(lambda elem: elem[0] != '_id' , order_list_dict.items())) 
+	print(order_list_dict.keys())
+	'''
+
+	'''
+	try:
+		with open(BASE_DIR+ '/src/order_list.json', "r") as jsonFile:
+			order_list_dict = json.load(jsonFile) #, object_hook=DecodeDateTime
+	except IOError as err:
+		print('err')
+	'''
+	'''
+	taotal_order_ids = list(order_list_dict.keys())
+	if order_id in taotal_order_ids:
+		order_list_dict[order_id]['order_processed'] = True
+	'''
+	
+	query =Col_pro.find_one({PID+".show":True})
+	print(query)
+	replace_data = {"$set" :{PID+".show":False}}
+	result = Col_pro.update_one( query, replace_data )
+	print(result)
+
+	'''
+		with open(BASE_DIR+ '/src/order_list.json', "w") as jsonFile:
+		    json.dump(order_list_dict, jsonFile, cls=DateTimeEncoder)
+
+	'''
+	'''
 
 	pids = list(product_list_PID.keys())
 	if PID in pids:
@@ -422,7 +644,8 @@ def close_product(PID):
 				if str(e['PID']) == PID:
 					e['show'] = False
 
-		'''Categ_dict = {}
+		
+		Categ_dict = {}
 		temp_dic_list = []
 		for key,values in PID_dict.items():
 			temp_dic_list.append(PID_dict[key])
@@ -436,6 +659,7 @@ def close_product(PID):
 
 		#print(PID_dict)
 		#print(Categ_dict.keys())
+	'''
 		with open('product_list_PID.json', "w") as jsonFile:
 		    json.dump(product_list_PID, jsonFile)
 		with open('product_list_categ.json', "w") as jsonFile:
@@ -444,30 +668,23 @@ def close_product(PID):
 		return redirect(url_for('product_update'))
 
 	else:
-		return render_template('error.html')
+		'''
+
+	return redirect(url_for('product_update'))
 
 @app.route('/open-product/<PID>')
 @login_required
 def open_product(PID):
 	#product_list_categ
+	Col_pro = db["product"]
+	query =Col_pro.find_one({PID+".show":False})
+	print(query)
+	replace_data = {"$set" :{PID+".show":True}}
+	result = Col_pro.update_one( query, replace_data )
+	print(result)
 
-	pids = list(product_list_PID.keys())
-	if PID in pids:
-		product_list_PID[PID]['show'] = True
-		for key,values in product_list_categ.items():
-			for e in values:
-				if str(e['PID']) == PID:
-					e['show'] = True
-		with open('product_list_PID.json', "w") as jsonFile:
-		    json.dump(product_list_PID, jsonFile)
-		with open('product_list_categ.json', "w") as jsonFile:
-		    json.dump(product_list_categ, jsonFile)
-
-		return redirect(url_for('product_update'))
-
-	else:
-		return render_template('error.html')
-
+	return redirect(url_for('product_update'))
+'''
 @app.route('/downlaodFile/edith', methods=['POST','GET'])
 def downlaodFile():
 	try:
@@ -482,7 +699,8 @@ def downlaodFile():
 		mimetype='application/json'
 		)
 	return response
-	'''content = json.dumps(order_list_dict)
+	'''
+'''content = json.dumps(order_list_dict)
 	return Response(content, 
 		mimetype='application/json',
 		headers={'Content-Disposition':'attachment;filename=zones.geojson'})'''
@@ -504,6 +722,107 @@ def home2():
 		new_dict[key]=value["Rate"]
 	path = 'assets/product_photos/'
 	return render_template('index.html',product_list_categ=product_list_categ, price=new_dict)
+
+
+
+
+@app.route('/product_change')
+@login_required
+def product_change():
+	Collection_pro = db["product"] 
+	json_c = {}
+	for x in Collection_pro.find():
+		#print(x)
+		product_list_dict = x.copy()
+		#print(type(product_list_PID))
+		#print('\n')
+		#print(product_list_PID)
+		#print('\n')
+		product_list_dict.update(json_c)
+		#print('***********')
+
+	product_list_dict = dict(filter(lambda elem: elem[0] != '_id' , product_list_dict.items())) 
+	#print(product_list_PID)
+
+	'''
+	try:
+		with open(BASE_DIR+ '/src/product_list_PID.json', "r") as jsonFile:
+			product_list_dict = json.load(jsonFile) #, object_hook=DecodeDateTime
+	except IOError as err:
+		print('err')'''
+
+	#print(order_list_dict)
+	#check = len(order_list_dict.keys())
+	#print(order_list_dict.keys())
+	#print(len(list(order_list_dict.keys())))
+	if len(list(product_list_dict.keys())) != 0:
+		last_product = list(product_list_dict.keys())
+		last_product.sort()
+		last_product = last_product[-1]
+		dat = ''
+		counter = 1
+		for key in product_list_dict.keys():
+			#status = str(order_list_dict[key]['order_processed'])
+			s_pid = str(product_list_dict[key]['PID'])
+			action = '<button class="btn btn-warning updateBut" id="'+s_pid+'">Update</button>'
+			if key == last_product:
+				dat += '<tr class="last-row" ><td class="text-center">'+str(counter)+'</td><td class="text-center">'+str(product_list_dict[key]['PID'])+'</td><td class="text-center"><input type="text" class="form-control" id="pname'+s_pid+'" placeholder="Name" required value="'+str(product_list_dict[key]['Product_Name'])+'"></td><td class="text-center"><input type="number" class="form-control" id="mrp'+s_pid+'" placeholder="MRP" required value="'+str(product_list_dict[key]['MRP'])+'"></td><td class="text-center"><input type="text" class="form-control" id="dicount'+s_pid+'" placeholder="Discount" required value="'+str(product_list_dict[key]['Discount'])+'"></td><td class="text-center"><input type="number" class="form-control" id="rate'+s_pid+'" placeholder="Rate" required value="'+str(product_list_dict[key]['Rate'])+'"></td><td class="text-center">'+action+'</td></tr>'
+			else:
+				dat += '<tr><td class="text-center">'+str(counter)+'</td><td class="text-center">'+str(product_list_dict[key]['PID'])+'</td><td class="text-center"><input type="text" class="form-control" id="pname'+s_pid+'" placeholder="Name" required value="'+str(product_list_dict[key]['Product_Name'])+'"></td><td class="text-center"><input type="number" class="form-control" id="mrp'+s_pid+'" placeholder="MRP" required value="'+str(product_list_dict[key]['MRP'])+'"></td><td class="text-center"><input type="text" class="form-control" id="dicount'+s_pid+'" placeholder="Discount" required value="'+str(product_list_dict[key]['Discount'])+'"></td><td class="text-center"><input type="number" class="form-control" id="rate'+s_pid+'" placeholder="Rate" required value="'+str(product_list_dict[key]['Rate'])+'"></td><td class="text-center">'+action+'</td></tr>'
+			counter += 1
+			#total_amt += order_list_dict[key]["qty_amt"]
+
+		product_table = '<tbody>'+dat+'</tbody>'
+	else:
+		product_table = '<tbody>No Data</tbody>'
+
+	return render_template('chng_price.html',product_table=product_table)
+
+
+
+@app.route('/cng_price',methods = ['POST','GET'])
+@login_required
+def cng_price():
+	if request.method == 'POST':
+		#print(dir(request))
+		result = request.form
+		#print(request.values)
+		#print(result)
+		PID =  result['PID']
+		name = result['name']
+		mrp = result['mrp']
+		rate = result['rate']
+		disc = result['disc']
+
+		#print(PID,name,mrp,disc)
+		#print(type(PID))
+	Col_pro = db["product"]
+	query1 =Col_pro.find_one({PID+".PID":int(PID)})
+	replace_data1 = {"$set" :{PID+".Product_Name":name}}
+	result1 = Col_pro.update_one( query1, replace_data1 )
+
+	query2 =Col_pro.find_one({PID+".PID":int(PID)})
+	replace_data2 = {"$set" :{PID+".MRP":int(mrp)}}
+	result2 = Col_pro.update_one( query2, replace_data2 )
+
+	query3 =Col_pro.find_one({PID+".PID":int(PID)})
+	replace_data3 = {"$set" :{PID+".Rate":int(rate)}}
+	result3 = Col_pro.update_one( query3, replace_data3 )
+
+	query4 =Col_pro.find_one({PID+".PID":int(PID)})
+	replace_data4 = {"$set" :{PID+".Discount":disc}}
+	result4 = Col_pro.update_one( query4, replace_data4 )
+
+
+	'''if request.method == 'GET':
+		print(dir(request))
+		result = request.form
+		print(result)'''
+
+
+	return "success"
+
+
 
 if __name__ == '__main__':
 	app.run(debug=True, port=int(os.environ.get('PORT',80)))
