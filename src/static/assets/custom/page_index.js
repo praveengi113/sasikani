@@ -111,9 +111,12 @@ $("body").on('input','.qty',function() {
       amount += parseInt(html.split(" ")[1]);
       
     }
-    $('#grand_total').html('<b>₹ '+amount+'</b>')
-    $('#grand_total_po').html('<b>₹ '+amount+'</b>')
-    
+    $('#grand_total').html('<b>₹ '+amount+'</b>');
+    $('#grand_total_po').html('<b>₹ '+amount+'</b>');
+    $('#grand_total_fab').html('<b>₹ '+amount+'</b>');
+    $('#grand_total_modal').html('<b>₹ '+amount+'</b>');
+
+
 
     if(amount >= 3000){
     	$("#order_submit").attr("disabled", false);
@@ -122,8 +125,6 @@ $("body").on('input','.qty',function() {
     }
 
 });
-
-
 
 /*const input_ele = document.getElementsByClassName('qty')
 
@@ -184,26 +185,29 @@ function updateAmt(e){
 
 }*/
 
-
 //content18-v - phone
+//content18-v - phone
+var phone;
 //content17-v - laptop
 $(document).ready(function() {
 $.unblockUI();
 //$(window).load(function() { $.unblockUI(); });
 $("#order_submit").attr("disabled", true);
 const x = window.matchMedia("(max-width: 900px)");
-console.info(x);
+//console.info(x);
 if (x.matches) { // If media query matches
 //document.body.style.backgroundColor = "yellow";
 //alert('phone');
 $("#order_div_foc").attr("href","index.html#content18-v");
 $('#content17-v').remove()
+phone = true;
 
 } else {
 //document.body.style.backgroundColor = "pink";
 $("#order_div_foc").attr("href","index.html#content17-v");
 $('#content18-v').remove()
 //alert('laptop');
+phone = false;
 }
 
 });
@@ -212,8 +216,8 @@ $('#content18-v').remove()
 $('#accept').click(function(e) {
 //alert('fdhdfh');
     var form = $('#order_form');
-	console.info(form);
-	console.info(for_url);
+	//console.info(form);
+	//console.info(for_url);
     //console.info(form);
 	//form.validate();
     form.attr('action', for_url);
@@ -230,3 +234,43 @@ $('#accept').click(function(e) {
 	alert($('#pay_method_send').val());
     form.submit();
 });
+
+
+/*<tr> 
+<td>10 CM electric sparkler</td>
+<td>5</td>
+<td>₹ 50</td>  
+</tr>*/
+
+$(document).on('click','#myBtn', function(){
+  $('#exampleModal').modal('show');  
+  var order_form = $('#order_form').serializeArray();
+      dataObj = {};
+//console.info(order_form);
+
+$(order_form).each(function(i, field){
+    if(field.name != 'name' && field.name != 'phone' && field.name != 'email' && field.name != 'address' && field.name != 'payment_option'){
+        if(field.value != '0'){
+            dataObj[field.name] = field.value;
+        }
+    }
+});
+//$("#table_body").empty();
+for(const property in dataObj){
+    
+    var input_ele = $('input[name="'+`${property}`+'"]');
+    //console.info(input_ele);
+    if(phone){
+        var tot_price = $(input_ele).parent().next().find('.total_price').text()
+        var title = $(input_ele).parent().prev().find('.title').text()
+    }else{
+        var title = $(input_ele).parent().prev().prev().find('.title').text()
+        var tot_price = $(input_ele).parent().next().find('.total_price').text()      
+    }
+
+    //console.info(`${dataObj[property]}`);    
+    var html = "<tr><td>"+title+"</td><td>"+`${dataObj[property]}`+"</td><td>"+tot_price+"</td></tr>"
+    $('#table_body').append(html);
+}
+
+})

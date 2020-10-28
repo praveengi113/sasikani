@@ -66,6 +66,21 @@
     font-size:1.4em;
 }
 
+#myBtn {
+  display: none; /* Hidden by default */
+  position: fixed; /* Fixed/sticky position */
+  bottom: 20px; /* Place the button at the bottom of the page */
+  right: 30px; /* Place the button 30px from the right */
+  z-index: 99; /* Make sure it does not overlap */
+  border: none; /* Remove borders */
+  outline: none; /* Remove outline */
+  background-color: #ed7438; /* Set a background color */
+  color: white; /* Text color */
+  cursor: pointer; /* Add a mouse pointer on hover */
+  padding: 5px; /* Some padding */
+  border-radius: 10px; /* Rounded corners */
+  font-size: 18px; /* Increase font size */
+}
 
 /*start*/
 .param {
@@ -351,11 +366,11 @@ color: green;
                                     </div>
             <div class="col-4">
               <label class="m-0" for="PID_{{item.PID}}"><small><b>Quantity</b></small></label>
-               <input name="PID_{{item.PID}}" class="form-control qty" min="0" type="number">
+               <input name="PID_{{item.PID}}" class="form-control qty" min="0" type="number" value="0">
             </div>
             <div class="col-8">
 
-              <label class="m-0" for="PID_1"><small><b>Total Price</b> (Added for checkout)</small></label>
+              <label class="m-0" for="PID_1"><small><b>Total Price</b></small><small class="total_price_cmt"> (Add Quantity for checkout)</small></label>
         <div class=""> 
             <b class="total_price" style="font-size: xx-large;">₹ 0</b>   
         </div> 
@@ -470,7 +485,7 @@ color: green;
         </div> <!-- price-wrap .// -->
     </td>
     <td> 
-        <input name="PID_{{item.PID}}" class="form-control qty" min="0" type="number">
+        <input name="PID_{{item.PID}}" class="form-control qty" min="0" type="number" value="0">
     </td>
     <td class="text-right"> 
         <div class="price-wrap"> 
@@ -765,9 +780,50 @@ color: green;
   <script src="{{ url_for('static', filename='assets/formoid/formoid.min.js') }}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js" integrity="sha512-eYSzo+20ajZMRsjxB6L7eyqo5kuXuS2+wEbbOkpaur+sA2shQameiJiWEzCIDwJqaB0a4a6tCuEvCOBHUg3Skg==" crossorigin="anonymous"></script>
   
+
+ <button type="button" id="myBtn"><i class="fas fa-shopping-cart" ></i>
+    <var class="price" id="grand_total_fab" style="font-size:large"><b>₹ 0</b></var>
+ </button>
   
- <div id="scrollToTop" class="scrollToTop mbr-arrow-up"><a style="text-align: center;"><i class="mbr-arrow-up-icon mbr-arrow-up-icon-cm cm-icon cm-icon-smallarrow-up"></i></a></div>
-    <input name="animation" type="hidden">
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Cart Items</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body overflow-auto">
+<table class="table table-hover shopping-cart-wrap">
+<thead class="text-muted">
+<tr>
+  <th scope="col">Product</th>
+ <!-- <th scope="col" width="120">MRP</th>
+  <th scope="col" width="120">Offer</th> -->
+  <th scope="col" >Quantity</th>
+  <th scope="col"  class="text-right">Total Price</th>
+</tr>
+</thead>
+<tbody id='table_body'>
+
+
+</tbody>
+</table>
+
+
+   </div>
+      <div class="modal-footer">
+<span class="badge badge-dark">
+    <b style="font-size:x-large">Grand Total: </b>
+    <var class="price" id="grand_total_modal" style="font-size:x-large"><b>₹ 0</b></var>
+     </span>            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
     const price = [
@@ -778,6 +834,23 @@ color: green;
     ]
 </script>
 
+ <script>
+  //Get the button:
+mybutton = document.getElementById("myBtn");
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 1500 || document.documentElement.scrollTop > 1500) {
+    mybutton.style.display = "block";
+  } else {
+    mybutton.style.display = "none";
+  }
+}
+
+
+ </script>
 <script src="{{ url_for('static', filename='assets/custom/page_index.js') }}"></script>
 
   </body>
