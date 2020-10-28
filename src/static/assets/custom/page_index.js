@@ -72,35 +72,46 @@ if(qty == ""){
 
 
 $("body").on('input','.qty',function() {
-	//alert('hi')
-	console.info($(this));
-	var PID = $(this).attr('name');
-	PID = parseInt(PID.split("_")[1]);
+//$(".qty").bind('input',function() {
+    //alert('hi')
+    console.info($(this));
+    var PID = $(this).attr('name');
+    PID = parseInt(PID.split("_")[1]);
     var qty = parseInt($(this).val());
-    console.info(typeof(qty))
+    //alert(qty);
+    //console.info(qty)
+    //console.info(qty)
+    //console.info(typeof(qty))
+    if(Number.isNaN(qty)){
+        $(this).val("0");//focus
+        $(this).parent().next().find('.total_price').html('₹ 0');
+        $(this).parent().next().find('.total_price_cmt').html('(Add Quantity for checkout)');
+    }else{
+        //alert('Not NaN')
+    }
     if (qty >= 0){
-    	var rate = parseInt(price[PID-1])
-    	tot_amt = rate*qty
-    	console.info(tot_amt)
-    	$(this).parent().next().find('.total_price').html('₹ '+tot_amt);
-    	if(qty == 0){
-    		$(this).parent().next().find('.total_price_cmt').html('(Add Quantity for checkout)');
-    		
-    	}else{
-    		$(this).parent().next().find('.total_price_cmt').html('(Item Added for checkout)');
-    	}
+        var rate = parseInt(price[PID-1])
+        tot_amt = rate*qty
+        console.info(tot_amt)
+        $(this).parent().next().find('.total_price').html('₹ '+tot_amt);
+        if(qty == 0){
+            $(this).parent().next().find('.total_price_cmt').html('(Add Quantity for checkout)');
+            
+        }else{
+            $(this).parent().next().find('.total_price_cmt').html('(Item Added for checkout)');
+        }
     }else if(qty == ""){
-    	$(this).val("0");//focus
-    	$(this).parent().next().find('.total_price').html('₹ 0');
-    	$(this).parent().next().find('.total_price_cmt').html('(Add Quantity for checkout)');
+        $(this).val("0");//focus
+        $(this).parent().next().find('.total_price').html('₹ 0');
+        $(this).parent().next().find('.total_price_cmt').html('(Add Quantity for checkout)');
 
     }
-	if(qty == " "){
-	    	$(this).val("0");//focus
-	    	$(this).parent().next().find('.total_price').html('₹ 0');
-	    	$(this).parent().next().find('.total_price_cmt').html('(Add Quantity for checkout)');
+    if(qty == " "){
+            $(this).val("0");//focus
+            $(this).parent().next().find('.total_price').html('₹ 0');
+            $(this).parent().next().find('.total_price_cmt').html('(Add Quantity for checkout)');
 
-	    }
+        }
     var tot_pri = $('.total_price');
     //var s_no = $("#extra_expense_div .s-no")
     var amount = 0;
@@ -119,13 +130,12 @@ $("body").on('input','.qty',function() {
 
 
     if(amount >= 3000){
-    	$("#order_submit").attr("disabled", false);
+        $("#order_submit").attr("disabled", false);
     }else{
-    	$("#order_submit").attr("disabled", true);
+        $("#order_submit").attr("disabled", true);
     }
 
 });
-
 /*const input_ele = document.getElementsByClassName('qty')
 
 input_ele.addEventListener("input",updateAmt);
