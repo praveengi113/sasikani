@@ -255,7 +255,7 @@ $(order_form).each(function(i, field){
         }
     }
 });
-//$("#table_body").empty();
+$("#table_body").empty();
 for(const property in dataObj){
     
     var input_ele = $('input[name="'+`${property}`+'"]');
