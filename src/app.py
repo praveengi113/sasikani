@@ -397,6 +397,70 @@ def admin():
 	return render_template('admin_page.html',orders_table=orders_table)
 
 
+@app.route('/adminplus')
+@login_required
+def adminplus():
+
+	Col_order = db["orders"]
+	json_d = {}
+	order_list_dict = {}
+	for y in Col_order.find():
+		#print(x)
+		order_list_dict2 = y.copy()
+		#print(type(product_list_PID))
+		#print('\n')
+		#print(product_list_PID)
+		#print('\n')
+		order_list_dict.update(order_list_dict2)
+		#print('***********')
+
+	order_list_dict = dict(filter(lambda elem: elem[0] != '_id' , order_list_dict.items())) 
+	#print("\n From Database")
+	#print(order_list_dict)
+
+	'''
+
+	try:
+		with open(BASE_DIR+ '/src/order_list.json', "r") as jsonFile:
+			order_list_dict = json.load(jsonFile) #, object_hook=DecodeDateTime
+	except IOError as err:
+		print('err')'''
+
+	#print(order_list_dict)
+	#check = len(order_list_dict.keys())
+	#print(order_list_dict.keys())
+	#print(len(list(order_list_dict.keys())))
+	if len(list(order_list_dict.keys())) != 0:
+		last_order = list(order_list_dict.keys())
+		last_order.sort()
+		last_order = last_order[-1]
+		dat = ''
+		counter = 1
+		for key in order_list_dict.keys():
+			order_date = str(order_list_dict[key]['order_time'])[:10]
+			cus_address = order_list_dict[key]['customer_details']['address']
+			p_type = order_list_dict[key]['payment_option']
+			if order_list_dict[key]['order_processed']:
+				status = "Closed"
+				action = 'Nil'
+			else:
+				status = "Open"
+				action = '<a class="btn btn-success" role="button" href="close-order/'+str(key)+'">Close Order</a>'
+			#status = str(order_list_dict[key]['order_processed'])
+			if key == last_order:
+				dat += '<tr class="last-row" ><td class="text-center">'+str(counter)+'</td><td class="text-center"><a href="order-detail/'+str(key)+'">'+str(key)+'</a></td><td class="text-center">'+order_date+'</td><td class="text-center">'+str(order_list_dict[key]['customer_details']['name'])+'</td><td class="text-center">'+cus_address+'</td><td class="text-center">'+str(order_list_dict[key]['customer_details']['phone'])+'</td><td class="text-center">'+str(order_list_dict[key]['order_amt'])+'</td><td class="text-center">'+p_type+'</td><td class="text-center">'+status+'</td><td class="text-center">'+action+'</td></tr>'
+			else:
+				dat += '<tr><td class="text-center">'+str(counter)+'</td><td class="text-center"><a href="order-detail/'+str(key)+'">'+str(key)+'</a></td><td class="text-center">'+order_date+'</td><td class="text-center">'+str(order_list_dict[key]['customer_details']['name'])+'</td><td class="text-center">'+cus_address+'</td><td class="text-center">'+str(order_list_dict[key]['customer_details']['phone'])+'</td><td class="text-center">'+str(order_list_dict[key]['order_amt'])+'</td><td class="text-center">'+p_type+'</td><td class="text-center">'+status+'</td><td class="text-center">'+action+'</td></tr>'
+			counter += 1
+			#total_amt += order_list_dict[key]["qty_amt"]
+
+		orders_table = '<tbody>'+dat+'</tbody>'
+	else:
+		orders_table = '<tbody>No Data</tbody>'
+
+	return render_template('admin_plus.html',orders_table=orders_table)
+
+
 @app.route('/order-detail/<order_id>')
 @login_required
 def order_detail(order_id):

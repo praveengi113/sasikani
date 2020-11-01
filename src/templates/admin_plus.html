@@ -141,20 +141,15 @@ background:#eee;
 
 
 
-<div class="container bootstrap snippets bootdeys">
+<!-- <div class="container bootstrap snippets bootdeys"> -->
 <div class="row">
   <div class="col-sm-12">
 	  	<div class="panel panel-default">
 		  <div class="panel-body">
 			<hr>
 			<div class="row"><div class="text-right">
-				<a class="btn btn-success display-4" href="{{ url_for('adminplus') }}"><span class=" mbr-iconfont mbr-iconfont-btn"></span>Order Full Details</a>
-
-				 <a class="btn btn-info display-4" href="{{ url_for('product_update') }}"><span class=" mbr-iconfont mbr-iconfont-btn"></span>Show/Hide</a>
-
-				 <a class="btn btn-warning display-4" href="{{ url_for('product_change') }}"><span class=" mbr-iconfont mbr-iconfont-btn"></span>Update</a>
-				 
 				 <a class="btn btn-danger display-4" href="{{ url_for('logout') }}"><span class=" mbr-iconfont mbr-iconfont-btn"></span>Logout</a>
+
 			</div></div>
 			<div class="row">
 				<h3>Order Details</h3>
@@ -167,9 +162,12 @@ background:#eee;
 			        <tr>
 			        <th class="text-center" >S.No</th>
 			          <th class="text-center" >Order ID</th>
+			          <th class="text-center" >Order Date</th>
 			          <th class="text-center" >Name</th>
+			          <th class="text-center" >Address</th>
 			          <th class="text-center" >Phone</th>
 			          <th class="text-center" >Order Amount</th>
+			          <th class="text-center" >Payment Type</th>
 			          <th class="text-center" >Order Status</th>
 			          <th class="text-center" >Action</th>
 			        </tr>
@@ -185,12 +183,15 @@ background:#eee;
                     Back to Home
                 </a>
 
+                <a role="button" class="btn btn-primary" href="/admin">
+                    Back to Admin
+                </a>
+
 			</div>
 			</div>
 		  </div>
 		</div>
 	</div>
-</div>
 </div>
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js" integrity="sha512-YHQNqPhxuCY2ddskIbDlZfwY6Vx3L3w9WRbyJCY81xpqLmrM6rL2+LocBgeVHwGY9SXYfQWJ+lcEWx1fKS2s8A==" crossorigin="anonymous"></script>
@@ -217,12 +218,7 @@ background:#eee;
 </script>
 </body>
 
-<script>
-$(document).ready( function () {
-    $('#myTable').DataTable({
-    	rowReorder:{
-    		selector:'td:nth-child(2)'
-    	},
+<script> $(document).ready( function () { $('#myTable').DataTable({
     	responsive: true,
     	"lengthChange": true,
         dom: 'lBfrtip',
@@ -230,8 +226,6 @@ $(document).ready( function () {
             'excelHtml5',
             'pdfHtml5'
         ]
-    });
-} );
-</script>
+}); } ); </script>
 
 </html>
