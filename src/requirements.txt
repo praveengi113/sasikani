@@ -4,3 +4,5 @@ pytz
 requests
 pymongo
 dnspython
+Jinja2
+MarkupSafe
