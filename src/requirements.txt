@@ -6,3 +6,4 @@ pymongo
 dnspython
 Jinja2==3.0.3
 MarkupSafe
+itsdangerous==2.1.0
